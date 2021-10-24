@@ -1,7 +1,18 @@
 from app import console
 
 
-packages = 'django pytest-django pytest-cov django-extensions pytest-factoryboy werkzeug ipython'
+while True:
+    try:
+        install_drf = int(input("Will you use django REST framework in your project? ( 1 - yes, 0 - no): "))
+        if install_drf in [0, 1]:
+            break
+        else:
+            raise ValueError
+    except ValueError:
+        console.log("Enter integer 1 or 0 only")
+        continue
 
-for package in packages.split():
-    console.print(f"[yellow]{package}[yellow]")
+if install_drf == 1:
+    print("1 pressed")
+else:
+    print("0 pressed")
