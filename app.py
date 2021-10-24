@@ -1,4 +1,5 @@
 import os
+from re import sub
 import sys
 import subprocess
 
@@ -92,11 +93,19 @@ def main():
             create_virtualenv_with_pipenv(project_name)
 
             # TODO - create django project in the project folder directory
-            # todo - activate the virtual environment using pipenv shell
-            
-
             # todo - install the required packages
+            
+            # TODO - ask the user to provide the version numbers of the packages, leave it blank to install the latest packages
+            # TODO - ask the user for which database they will be using and configure the system accordingly
+            packages = 'django pytest-django psycopg2-binary pytest-cov django-extensions pytest-factoryboy werkzeug ipython pytest-factoryboy pytest-xdist pillow'
+            install_required_packages_process = subprocess.run(f'pipenv install {packages}', shell=True)
+            if install_required_packages_process.returncode == 0:
+                console.print("[bold green]Installation of default packages successfull!!![/bold green]")
+                console.print("[bold magenta]These packages were installed[/bold magenta]")
+                for package in packages.split():
+                    console.print(f"[yellow]{package}[yellow]")
 
+            
 
         except ModuleNotFoundError as e:
             # TODO - if pip is not installed systemwide, ask user if pip should be installed

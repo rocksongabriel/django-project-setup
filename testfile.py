@@ -1,10 +1,7 @@
-from rich.progress import Progress
+from app import console
 
 
-with Progress() as progress:
-    advance = True
-    task = progress.add_task("Install Package", total=100)
-    while advance:
-        for i in range(0, 10000000000):
-            progress.advance(task)
-        advance = False
+packages = 'django pytest-django pytest-cov django-extensions pytest-factoryboy werkzeug ipython'
+
+for package in packages.split():
+    console.print(f"[yellow]{package}[yellow]")

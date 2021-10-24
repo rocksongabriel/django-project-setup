@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# The test folders
+Test*/
+DjangoTest*/
+Project*/
+DjangoProject*/
+Django*/
