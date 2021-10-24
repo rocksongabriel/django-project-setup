@@ -8,6 +8,7 @@ from rich.console import Console
 console = Console()
 
 def get_project_name():
+    # TODO - Split using _
     project_name = input("What is the name of the project? ")
     project_name = "".join(project_name.split(" "))
     return project_name
@@ -113,15 +114,25 @@ def main():
             install_pipenv() # install pipenv if it doesn't exist
 
             # create a virtualenvironment usingn pipenv in this directory
-            create_virtualenv_with_pipenv(project_name)
+            # create_virtualenv_with_pipenv(project_name) # ! uncomment this
 
             # TODO - create django project in the project folder directory
             # todo - install the required packages
             
             # TODO - ask the user to provide the version numbers of the packages, leave it blank to install the latest packages
             # TODO - ask the user for which database they will be using and configure the system accordingly
-            package_install_status = install_packages_in_pipenv_virtualenv()
+            # package_install_status = install_packages_in_pipenv_virtualenv() # ! uncomment this
 
+            package_install_status = 0
+            if package_install_status == 0:
+                # todo - create the django project in the project folder 
+                create_django_project_process = subprocess.run(f'pipenv run django-admin startproject {project_name.upper()} .', shell=True)
+                if create_django_project_process.returncode == 0:
+                    console.print("[bold green]Django Project Created Successfully!!![/bold green]")
+                    console.print()
+                # todo split the settings files
+                # todo - create a custom user 
+                # todo - add configuration of the packages that need it
 
             
 
