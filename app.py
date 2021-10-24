@@ -20,7 +20,6 @@ def create_dir_for_project(project_name):
         console.log("[bold red]The directory already exists[/bold red]")
         console.log(e)
 
-
 def get_virtual_env_to_use():
     console.print()
     console.print("[bold magenta]Choose virtual environment package to use[/bold magenta]")
@@ -65,6 +64,30 @@ def create_virtualenv_with_pipenv(project_name):
             console.log("The python version should be a float value.")
             continue
 
+def query_user_for_drf_install_option():
+    while True:
+        try:
+            install_drf = int(input("Will you use django REST framework in your project? ( 1 - yes, 0 - no): "))
+            if install_drf in [0, 1]:
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            console.log("Enter integer 1 or 0 only")
+            continue
+    return install_drf
+
+def install_packages_in_pipenv_virtualenv():
+    install_drf = query_user_for_drf_install_option()    
+    packages = 'django pytest-django psycopg2-binary pytest-cov django-extensions pytest-factoryboy werkzeug ipython pytest-factoryboy pytest-xdist pillow'
+    if install_drf == 1:
+        packages = packages + ' ' + 'djangorestframework markdown django-filter'
+    install_required_packages_process = subprocess.run(f'pipenv install {packages}', shell=True)
+    if install_required_packages_process.returncode == 0:
+        console.print("[bold green]Installation of packages successfull!!![/bold green]")
+        console.print("[bold magenta]These packages were installed[/bold magenta]")
+        console.print()
+    return install_required_packages_process.returncode
 
 
 def main():
@@ -97,27 +120,8 @@ def main():
             
             # TODO - ask the user to provide the version numbers of the packages, leave it blank to install the latest packages
             # TODO - ask the user for which database they will be using and configure the system accordingly
-            
-            while True:
-                try:
-                    install_drf = int(input("Will you use django REST framework in your project? ( 1 - yes, 0 - no): "))
-                    if install_drf in [0, 1]:
-                        break
-                    else:
-                        raise ValueError
-                except ValueError:
-                    console.log("Enter integer 1 or 0 only")
-                    continue
-            
-            packages = 'django pytest-django psycopg2-binary pytest-cov django-extensions pytest-factoryboy werkzeug ipython pytest-factoryboy pytest-xdist pillow'
-            if install_drf == 1:
-                packages = packages + ' ' + 'djangorestframework markdown django-filter'
+            package_install_status = install_packages_in_pipenv_virtualenv()
 
-            install_required_packages_process = subprocess.run(f'pipenv install {packages}', shell=True)
-            if install_required_packages_process.returncode == 0:
-                console.print("[bold green]Installation of packages successfull!!![/bold green]")
-                console.print("[bold magenta]These packages were installed[/bold magenta]")
-                console.print()
 
             
 
