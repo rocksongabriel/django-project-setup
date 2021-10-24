@@ -91,6 +91,13 @@ def main():
             # create a virtualenvironment usingn pipenv in this directory
             create_virtualenv_with_pipenv(project_name)
 
+            # TODO - create django project in the project folder directory
+            # todo - activate the virtual environment using pipenv shell
+            
+
+            # todo - install the required packages
+
+
         except ModuleNotFoundError as e:
             # TODO - if pip is not installed systemwide, ask user if pip should be installed
             console.log("[bold red]pip is not installed. Please install pip on your system.[/bold red]")
