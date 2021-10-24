@@ -49,6 +49,22 @@ def install_pipenv():
             console.print("[bold green]pipenv was installed successfully!!![/bold green]")
             console.print()
 
+def create_virtualenv_with_pipenv(project_name):
+    while True:
+        try:
+            console.print("[yellow bold]Please ensure that the version you are using is installed on your device[/yellow bold]")
+            python_version = float(input("Enter the python version to use, e.g: 3.8: ")) # TODO add note to use only installed python versions
+            create_virtualenv_process = subprocess.run(f'pipenv --python {python_version}', shell=True)
+            if create_virtualenv_process.returncode == 0:
+                success_msg = f"virtual environment created successfully in the [red]{project_name}[/red] directory."
+                console.print(f"[bold green]{success_msg}[/bold green]")
+                console.print()
+            break
+        except ValueError:
+            console.log("The python version should be a float value.")
+            continue
+
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -71,20 +87,9 @@ def main():
         try:
             import pip
             install_pipenv() # install pipenv if it doesn't exist
+
             # create a virtualenvironment usingn pipenv in this directory
-  
-            while True:
-                try:
-                    python_version = float(input("Enter the python version to use, e.g: 3.8: ")) # TODO add note to use only installed python versions
-                    create_virtualenv_process = subprocess.run(f'pipenv --python {python_version}', shell=True)
-                    if create_virtualenv_process.returncode == 0:
-                        success_msg = f"virtual environment created successfully in the [red]{project_name}[/red] directory."
-                        console.print(f"[bold green]{success_msg}[/bold green]")
-                        console.print()
-                    break
-                except ValueError:
-                    console.log("The python version should be a float value.")
-                    continue
+            create_virtualenv_with_pipenv(project_name)
 
         except ModuleNotFoundError as e:
             # TODO - if pip is not installed systemwide, ask user if pip should be installed
