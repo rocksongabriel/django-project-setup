@@ -171,7 +171,7 @@ def main():
             package_install_status = 0
             if package_install_status == 0:
                 # todo - create the django project in the project folder 
-                # create_django_project(project_name) # ! uncomment this
+                create_django_project(project_name) # ! uncomment this
                 # todo - create the config files and folders
                 project_name = project_name.upper() # project name is now upper case
                 os.chdir(project_name)
@@ -183,6 +183,15 @@ def main():
                 files = ['urls.py', 'asgi.py', 'wsgi.py'] # the filenames to handle the copy for
                 for file in files:
                     shutil.move(os.path.join(project_folder, file), os.path.join(config_dir, file))
+
+                # copy the content of the settings file to the base.py file
+                settings_dir = os.path.join(config_dir, 'settings')
+                with open(os.path.join(project_folder, 'settings.py'), 'r') as file1, \
+                    open(os.path.join(settings_dir, 'base.py'), 'w') as file2:
+                    # read each line in file 1
+                    for line in file1:
+                        file2.write(line)
+
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
