@@ -94,11 +94,45 @@ def install_packages_in_pipenv_virtualenv():
     return install_required_packages_process.returncode
 
 def create_django_project(project_name):
+    console.print("[bold yellow]creating django project ...[/bold yellow]")
     create_django_project_process = subprocess.run(f'pipenv run django-admin startproject {project_name.upper()} .', shell=True)
     if create_django_project_process.returncode == 0:
-        console.print("[bold green]Django Project Created Successfully!!![/bold green]")
+        console.print("[bold green]django project created successfully !!![/bold green]")
         console.print()
 
+def create_config_folders_and_files(project_folder):
+    console.print("[bold yellow]creating config folders and settings files ...[/bold yellow]")
+     # create config and settings folder
+    os.makedirs('config/settings/')
+    # create init files
+    init_file_name = '__init__.py'
+    try:
+        with open(os.path.join(project_folder, 'config', init_file_name), 'w') as file1, \
+            open(os.path.join(project_folder, 'config/settings', init_file_name), 'w') as file2:
+            pass
+    except FileExistsError as e:
+        console.log(e)
+
+    # create 3 files under the config file
+    try:
+        with open(os.path.join(project_folder, 'config', 'asgi.py'), 'w') as file1, \
+            open(os.path.join(project_folder, 'config', 'wsgi.py'), 'w') as file2, \
+            open(os.path.join(project_folder, 'config', 'urls.py'), 'w') as file3:
+            pass
+    except FileExistsError as e:
+        console.log(e)
+    
+    # create four empty settings files under the settings directory
+    try:
+        with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as devfile, \
+            open(os.path.join(project_folder, 'config/settings', 'production.py'), 'w') as prodfile, \
+            open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as testfile, \
+            open(os.path.join(project_folder, 'config/settings', 'base.py'), 'w') as basefile:
+            pass
+    except FileExistsError as e:
+        console.log(e)
+    console.print("[bold green]successfully created config folders and settings files !!![/bold green]")
+    console.print()
 
 
 def main():
@@ -141,35 +175,8 @@ def main():
                 project_name = project_name.upper() # project name is now upper case
                 os.chdir(project_name)
                 project_folder = os.getcwd()
-                # create config and settings folder
-                os.makedirs('config/settings/')
-                # create init files
-                init_file_name = '__init__.py'
-                try:
-                    with open(os.path.join(project_folder, 'config', init_file_name), 'w') as file1, \
-                        open(os.path.join(project_folder, 'config/settings', init_file_name), 'w') as file2:
-                        pass
-                except FileExistsError as e:
-                    console.log(e)
-
-                # create 3 files under the config file
-                try:
-                    with open(os.path.join(project_folder, 'config', 'asgi.py'), 'w') as file1, \
-                        open(os.path.join(project_folder, 'config', 'wsgi.py'), 'w') as file2, \
-                        open(os.path.join(project_folder, 'config', 'urls.py'), 'w') as file3:
-                        pass
-                except FileExistsError as e:
-                    console.log(e)
-                
-                # create four empty settings files under the settings directory
-                try:
-                    with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as devfile, \
-                        open(os.path.join(project_folder, 'config/settings', 'production.py'), 'w') as prodfile, \
-                        open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as testfile, \
-                        open(os.path.join(project_folder, 'config/settings', 'base.py'), 'w') as basefile:
-                        pass
-                except FileExistsError as e:
-                    console.log(e)
+                create_config_folders_and_files(project_folder) # create the config folders and files
+               
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
