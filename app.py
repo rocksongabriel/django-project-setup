@@ -7,6 +7,9 @@ from rich.console import Console
 
 console = Console()
 
+# TODOs ------------------------------------------------------------------------------------------------
+# todo - add an else block to if blocks where you check the return code of processes
+
 def get_project_name():
     # TODO - Split using _
     project_name = input("What is the name of the project? ")
@@ -90,6 +93,13 @@ def install_packages_in_pipenv_virtualenv():
         console.print()
     return install_required_packages_process.returncode
 
+def create_django_project(project_name):
+    create_django_project_process = subprocess.run(f'pipenv run django-admin startproject {project_name.upper()} .', shell=True)
+    if create_django_project_process.returncode == 0:
+        console.print("[bold green]Django Project Created Successfully!!![/bold green]")
+        console.print()
+
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -126,11 +136,11 @@ def main():
             package_install_status = 0
             if package_install_status == 0:
                 # todo - create the django project in the project folder 
-                create_django_project_process = subprocess.run(f'pipenv run django-admin startproject {project_name.upper()} .', shell=True)
-                if create_django_project_process.returncode == 0:
-                    console.print("[bold green]Django Project Created Successfully!!![/bold green]")
-                    console.print()
+                # create_django_project(project_name) # ! uncomment this
                 # todo split the settings files
+                project_name = project_name.upper() # project name is now upper case
+                os.chdir(project_name)
+                print(os.getcwd())
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
 
