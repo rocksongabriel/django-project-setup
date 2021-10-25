@@ -112,7 +112,7 @@ def main():
     create_dir_for_project(project_name)
     
     os.chdir(project_name) # Change the direcotry to the project directory
-    project_directory = os.getcwd()
+    project_root_folder = os.getcwd() # This is the folder containing the project
 
     # Ask the user which virtual environment they would like to use
     virtual_env = get_virtual_env_to_use()
@@ -136,11 +136,41 @@ def main():
             package_install_status = 0
             if package_install_status == 0:
                 # todo - create the django project in the project folder 
-                # create_django_project(project_name) # ! uncomment this
+                create_django_project(project_name) # ! uncomment this
                 # todo split the settings files
                 project_name = project_name.upper() # project name is now upper case
                 os.chdir(project_name)
-                print(os.getcwd())
+                project_folder = os.getcwd()
+                # create config and settings folder
+                os.makedirs('config/settings/')
+                # create init files
+                init_file_name = '__init__.py'
+                try:
+                    with open(os.path.join(project_folder, 'config', init_file_name), 'w') as file1, \
+                        open(os.path.join(project_folder, 'config/settings', init_file_name), 'w') as file2:
+                        pass
+                except FileExistsError as e:
+                    console.log(e)
+
+                # create 3 files under the config file
+                try:
+                    with open(os.path.join(project_folder, 'config', 'asgi.py'), 'w') as file1, \
+                        open(os.path.join(project_folder, 'config', 'wsgi.py'), 'w') as file2, \
+                        open(os.path.join(project_folder, 'config', 'urls.py'), 'w') as file3:
+                        pass
+                except FileExistsError as e:
+                    console.log(e)
+                
+                # create four empty settings files under the settings directory
+                try:
+                    with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as devfile, \
+                        open(os.path.join(project_folder, 'config/settings', 'production.py'), 'w') as prodfile, \
+                        open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as testfile, \
+                        open(os.path.join(project_folder, 'config/settings', 'base.py'), 'w') as basefile:
+                        pass
+                except FileExistsError as e:
+                    console.log(e)
+
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
 
