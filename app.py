@@ -2,6 +2,7 @@ import os
 from re import sub
 import sys
 import subprocess
+import shutil
 
 from rich.console import Console
 
@@ -170,13 +171,18 @@ def main():
             package_install_status = 0
             if package_install_status == 0:
                 # todo - create the django project in the project folder 
-                create_django_project(project_name) # ! uncomment this
-                # todo split the settings files
+                # create_django_project(project_name) # ! uncomment this
+                # todo - create the config files and folders
                 project_name = project_name.upper() # project name is now upper case
                 os.chdir(project_name)
                 project_folder = os.getcwd()
                 create_config_folders_and_files(project_folder) # create the config folders and files
-               
+                # todo - move the default config files to the config directory i.e urls.py, wsgi.py, asgi.py
+                # move the default config files to the config folder
+                config_dir = os.path.join(project_folder, 'config')
+                files = ['urls.py', 'asgi.py', 'wsgi.py'] # the filenames to handle the copy for
+                for file in files:
+                    shutil.move(os.path.join(project_folder, file), os.path.join(config_dir, file))
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
