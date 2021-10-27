@@ -151,8 +151,15 @@ def write_settings_to_development_settings_file(project_folder):
         '\n'
         "INSTALLED_APPS += [\n\t'django_extensions',\n]", # add django_extensions to the installed apps here
     ]
-    with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as file:
+    with open(os.path.join(project_folder, 'config', 'settings', 'development.py'), 'w') as file:
         file.writelines(lines_to_write)
+
+    # Write database settings to the settings file
+    with open(os.path.join(project_folder, 'config', 'settings', 'development.py'), 'a') as file1:
+        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
+            for line in file2:
+                file1.write(line)
+
 
 def write_settings_to_production_settings_file(project_folder):
     lines_to_write = [
@@ -166,8 +173,14 @@ def write_settings_to_production_settings_file(project_folder):
         '\n'
         "INSTALLED_APPS += [\n\n]", 
     ]
-    with open(os.path.join(project_folder, 'config/settings', 'production.py'), 'w') as file:
+    with open(os.path.join(project_folder, 'config', 'settings', 'production.py'), 'w') as file:
         file.writelines(lines_to_write)
+
+    # Write database settings to the settings file
+    with open(os.path.join(project_folder, 'config', 'settings', 'production.py'), 'a') as file1:
+        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
+            for line in file2:
+                file1.write(line)
 
 def write_settings_to_testing_settings_file(project_folder):
     lines_to_write = [
@@ -181,8 +194,14 @@ def write_settings_to_testing_settings_file(project_folder):
         '\n'
         "INSTALLED_APPS += [\n\n]", 
     ]
-    with open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as file:
+    with open(os.path.join(project_folder, 'config', 'settings', 'testing.py'), 'w') as file:
         file.writelines(lines_to_write)
+
+    # Write database settings to the settings file
+    with open(os.path.join(project_folder, 'config', 'settings', 'testing.py'), 'a') as file1:
+        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
+            for line in file2:
+                file1.write(line)
 
 def change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name):
     old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'

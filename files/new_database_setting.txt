@@ -1,3 +1,6 @@
+
+
+# Database setting
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
