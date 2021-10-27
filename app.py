@@ -196,6 +196,39 @@ def change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name):
     with open(base_settings_file, 'w') as file:
         file.write(newBase)
 
+def delete_common_settings_from_base_settings(base_settings_file):
+    lines = []
+    lines_to_delete = []
+
+    with open(base_settings_file, 'r') as file:
+        lines = file.readlines()
+        for the_line in lines:
+            if the_line.startswith('# Quick-start'):
+                lines_to_delete.append(the_line)
+            elif the_line.startswith('SECRET_KEY'):
+                lines_to_delete.append(the_line)
+            elif the_line.startswith('# SECURITY WARNING:'):
+                lines_to_delete.append(the_line)  
+            elif the_line.startswith('# See ht'):
+                lines_to_delete.append(the_line)
+            elif the_line.startswith('DEBUG'):
+                lines_to_delete.append(the_line)
+            elif the_line.startswith('ALLOWED_HOSTS'):
+                lines_to_delete.append(the_line)
+
+    with open(base_settings_file, 'w') as file:
+        for line in lines:
+            if line not in lines_to_delete:
+                file.write(line)
+
+    new_base_file_lines = []
+    with open(base_settings_file, 'r') as file:
+        new_base_file_lines = file.readlines()
+
+    lines_to_write_to_base_file = new_base_file_lines[0:18] + new_base_file_lines[23:] # remove the blank lines between the BASE_DIR line and the INTALLED_APPS line
+    with open(base_settings_file, 'w') as file:
+        file.writelines(lines_to_write_to_base_file)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -256,41 +289,11 @@ def main():
                 # Change where the BASE_DIR is pointing and change the root conf, and wsgi application settings
                 change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name)
 
-                # Remove certain lines from the base file, these lines will move moved to the individual settings files
+                # Remove certain lines from the base file, these lines will be moved to the individual settings files
                 # TODO - refactor this code
-                lines = []
-                lines_to_delete = []
+                delete_common_settings_from_base_settings(base_settings_file)
 
-                with open(base_settings_file, 'r') as file:
-                    lines = file.readlines()
-                    for the_line in lines:
-                        if the_line.startswith('# Quick-start'):
-                            lines_to_delete.append(the_line)
-                        elif the_line.startswith('SECRET_KEY'):
-                            lines_to_delete.append(the_line)
-                        elif the_line.startswith('# SECURITY WARNING:'):
-                            lines_to_delete.append(the_line)  
-                        elif the_line.startswith('# See ht'):
-                            lines_to_delete.append(the_line)
-                        elif the_line.startswith('DEBUG'):
-                            lines_to_delete.append(the_line)
-                        elif the_line.startswith('ALLOWED_HOSTS'):
-                            lines_to_delete.append(the_line)
-
-                with open(base_settings_file, 'w') as file:
-                    for line in lines:
-                        if line not in lines_to_delete:
-                            file.write(line)
-
-                new_base_file_lines = []
-                with open(base_settings_file, 'r') as file:
-                    new_base_file_lines = file.readlines()
-
-                lines_to_write_to_base_file = new_base_file_lines[0:18] + new_base_file_lines[23:] # remove the blank lines between the BASE_DIR line and the INTALLED_APPS line
-                with open(base_settings_file, 'w') as file:
-                    file.writelines(lines_to_write_to_base_file)
-
-                # todo - add the settings to the individual setting files
+                #  add the settings to the individual setting files
                 # devevelopment.py
                 write_settings_to_development_settings_file(project_folder)
                 # production.py
