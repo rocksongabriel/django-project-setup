@@ -326,6 +326,15 @@ def add_static_files_and_media_settings(base_settings_file, config_dir):
 
     add_media_settings_url_to_urls(config_dir)
 
+def modify_manage_file_to_use_development_settings(manage_file, project_name):
+    with open(manage_file) as file:
+        old_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.settings'".format(project_name)
+        new_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.config.settings.development'".format(project_name)
+        newManageFile = file.read().replace(old_line, new_line)
+
+    with open(manage_file, 'w') as file:
+        file.writelines(newManageFile)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -401,13 +410,16 @@ def main():
                 # delete the sqlite settings from the base.py settings file
                 delete_database_settings_from_base_settings(base_settings_file)
 
-                # todo - add djangorestframework to the INSTALLED_APPS if the user included it
+                #  add djangorestframework to the INSTALLED_APPS if the user included it
                 # if installed_drf == 1: # ! uncomment this
                 #     add_extra_apps_to_installed_apps(base_settings_file)
 
-                # todo - add static files settings and media settings, and dir to templates
+                # add static files settings and media settings, and dir to templates
                 add_static_files_and_media_settings(base_settings_file, config_dir)
 
+                # todo - replace the settings in the manage.py file with the development settings
+                manage_file = os.path.join(project_root_folder, 'manage.py')
+                modify_manage_file_to_use_development_settings(manage_file, project_name)
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
