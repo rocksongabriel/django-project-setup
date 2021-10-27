@@ -296,6 +296,36 @@ def add_extra_apps_to_installed_apps(base_settings_file):
     with open(base_settings_file, 'w') as file:
         file.writelines(newBase)
 
+def add_media_settings_url_to_urls(config_dir):
+    base_url_file = os.path.join(config_dir, 'urls.py')
+    with open(base_url_file, 'a') as file1:
+        with open(os.path.join(root_of_this_code, 'files', 'media_settings_in_urls.txt')) as file2:
+            for line in file2:
+                file1.write(line)
+
+def add_static_files_and_media_settings(base_settings_file, config_dir):
+    with open(base_settings_file) as file:
+        lines = file.readlines()
+
+    with open(base_settings_file, 'r') as file:
+        newBase = []
+        for line in lines:
+            if line.startswith('STATIC_URL'):
+                newBase.append("MEDIA_URL = '/media/'\n")
+                newBase.append("MEDIA_ROOT = BASE_DIR / 'media'\n\n")
+
+                newBase.append("STATIC_ROOT = BASE_DIR / 'staticfiles'\n")
+                newBase.append("STATICFILES_DIRS = [\n\tBASE_DIR / 'static',\n]\n")
+            if line.endswith("'DIRS': [],\n"):
+                newBase.append("\t\t'DIRS': [BASE_DIR / 'templates',],\n")
+            else:
+                newBase.append(line)
+
+    with open(base_settings_file, 'w') as file:
+        file.writelines(newBase)
+
+    add_media_settings_url_to_urls(config_dir)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -374,6 +404,9 @@ def main():
                 # todo - add djangorestframework to the INSTALLED_APPS if the user included it
                 # if installed_drf == 1: # ! uncomment this
                 #     add_extra_apps_to_installed_apps(base_settings_file)
+
+                # todo - add static files settings and media settings, and dir to templates
+                add_static_files_and_media_settings(base_settings_file, config_dir)
 
 
                 # todo - create a custom user 
