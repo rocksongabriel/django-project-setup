@@ -181,6 +181,21 @@ def write_settings_to_testing_settings_file(project_folder):
     with open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as file:
         file.writelines(lines_to_write)
 
+def change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name):
+    old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'
+    new_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent.parent'
+    old_url_conf = "ROOT_URLCONF = '{}.urls'".format(project_name)
+    new_url_conf = "ROOT_URLCONF = '{}.config.urls'".format(project_name)
+    old_wsgi_application = "WSGI_APPLICATION = '{}.wsgi.application'".format(project_name)
+    new_wsgi_application = "WSGI_APPLICATION = 'TESTPROJECT.config.wsgi.application'".format(project_name)
+    with open(base_settings_file, 'r') as file:
+        newBase = file.read().replace(old_base_dir, new_base_dir)
+        newBase = newBase.replace(old_url_conf, new_url_conf)
+        newBase = newBase.replace(old_wsgi_application, new_wsgi_application)
+    
+    with open(base_settings_file, 'w') as file:
+        file.write(newBase)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -238,14 +253,8 @@ def main():
                 # todo - edit the base.py file
                 base_settings_file = os.path.join(settings_dir, 'base.py')
 
-                # Change where the BASE_DIR is pointing
-                old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'
-                new_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent.parent'
-                with open(base_settings_file, 'r') as file:
-                    newBase = file.read().replace(old_base_dir, new_base_dir)
-                
-                with open(base_settings_file, 'w') as file:
-                    file.write(newBase)
+                # Change where the BASE_DIR is pointing and change the root conf, and wsgi application settings
+                change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name)
 
                 # Remove certain lines from the base file, these lines will move moved to the individual settings files
                 # TODO - refactor this code
@@ -288,25 +297,6 @@ def main():
                 write_settings_to_production_settings_file(project_folder)
                 # testing.py
                 write_settings_to_testing_settings_file(project_folder)
-
-                # todo - change the root conf 
-                old_url_conf = "ROOT_URLCONF = '{}.urls'".format(project_name)
-                new_url_conf = "ROOT_URLCONF = '{}.config.urls'".format(project_name)
-                with open(base_settings_file, 'r') as file:
-                    newBase = file.read().replace(old_url_conf, new_url_conf)
-                
-                with open(base_settings_file, 'w') as file:
-                    file.write(newBase)
-
-                # todo - change the WSGI APPLICATION setting
-                old_wsgi_application = "WSGI_APPLICATION = '{}.wsgi.application'".format(project_name)
-                new_wsgi_application = "WSGI_APPLICATION = 'TESTPROJECT.config.wsgi.application'".format(project_name)
-
-                with open(base_settings_file, 'r') as file:
-                    newBase = file.read().replace(old_wsgi_application, new_wsgi_application)
-
-                with open(base_settings_file, 'w') as file:
-                    file.write(newBase)
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
