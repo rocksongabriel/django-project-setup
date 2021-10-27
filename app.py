@@ -6,6 +6,8 @@ import shutil
 
 from rich.console import Console
 
+from utils import secret_key
+
 console = Console()
 
 # TODOs ------------------------------------------------------------------------------------------------
@@ -134,6 +136,21 @@ def create_config_folders_and_files(project_folder):
     console.print("[bold green]successfully created config folders and settings files !!![/bold green]")
     console.print()
 
+def write_settings_to_development_settings_file(project_folder):
+    lines_to_write = [
+        'from .base import *\n',
+        '\n',
+        "SECRET_KEY = '{}'\n".format(secret_key()),
+        '\n',
+        'DEBUG = True\n',
+        '\n'
+        'ALLOWED_HOSTS = []\n',
+        '\n'
+        "INSTALLED_APPS += [\n\t'django_extensions',\n]", # add django_extensions to the installed apps here
+    ]
+    with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as file:
+        file.writelines(lines_to_write)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -176,6 +193,7 @@ def main():
                 os.chdir(project_name)
                 project_folder = os.getcwd()
                 create_config_folders_and_files(project_folder) # create the config folders and files
+
                 # todo - move the default config files to the config directory i.e urls.py, wsgi.py, asgi.py
                 # move the default config files to the config folder
                 config_dir = os.path.join(project_folder, 'config')
@@ -183,16 +201,13 @@ def main():
                 for file in files:
                     shutil.move(os.path.join(project_folder, file), os.path.join(config_dir, file))
 
-                # copy the content of the settings file to the base.py file
+                # copy the content of the settings.py file to the base.py file
                 settings_dir = os.path.join(config_dir, 'settings')
-                with open(os.path.join(project_folder, 'settings.py'), 'r') as file1, \
-                    open(os.path.join(settings_dir, 'base.py'), 'w') as file2:
-                    # read each line in file 1
-                    for line in file1:
-                        file2.write(line)
-
-                # edit the base.py file
+                shutil.move(os.path.join(project_folder, 'settings.py'), os.path.join(settings_dir, 'base.py'))
+                
+                # todo - edit the base.py file
                 base_settings_file = os.path.join(settings_dir, 'base.py')
+
                 # Change where the BASE_DIR is pointing
                 old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'
                 new_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent.parent'
@@ -202,7 +217,8 @@ def main():
                 with open(base_settings_file, 'w') as file:
                     file.write(newBase)
 
-                # Remove some lines from the base file, these lines will move moved to the individual settings files
+                # Remove certain lines from the base file, these lines will move moved to the individual settings files
+                # TODO - refactor this code
                 lines = []
                 lines_to_delete = []
 
@@ -234,6 +250,11 @@ def main():
                 lines_to_write_to_base_file = new_base_file_lines[0:18] + new_base_file_lines[23:] # remove the blank lines between the BASE_DIR line and the INTALLED_APPS line
                 with open(base_settings_file, 'w') as file:
                     file.writelines(lines_to_write_to_base_file)
+
+                # todo - add the settings to the individual setting files
+                # devevelopment.py
+                write_settings_to_development_settings_file(project_folder)
+
 
 
                 # todo - create a custom user 
