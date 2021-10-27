@@ -90,7 +90,6 @@ def install_packages_in_pipenv_virtualenv():
     install_required_packages_process = subprocess.run(f'pipenv install {packages}', shell=True)
     if install_required_packages_process.returncode == 0:
         console.print("[bold green]Installation of packages successfull!!![/bold green]")
-        console.print("[bold magenta]These packages were installed[/bold magenta]")
         console.print()
     return install_required_packages_process.returncode
 
@@ -191,6 +190,50 @@ def main():
                     # read each line in file 1
                     for line in file1:
                         file2.write(line)
+
+                # edit the base.py file
+                base_settings_file = os.path.join(settings_dir, 'base.py')
+                # Change where the BASE_DIR is pointing
+                old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'
+                new_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent.parent'
+                with open(base_settings_file, 'r') as file:
+                    newBase = file.read().replace(old_base_dir, new_base_dir)
+                
+                with open(base_settings_file, 'w') as file:
+                    file.write(newBase)
+
+                # Remove some lines from the base file, these lines will move moved to the individual settings files
+                lines = []
+                lines_to_delete = []
+
+                with open(base_settings_file, 'r') as file:
+                    lines = file.readlines()
+                    for the_line in lines:
+                        if the_line.startswith('# Quick-start'):
+                            lines_to_delete.append(the_line)
+                        elif the_line.startswith('SECRET_KEY'):
+                            lines_to_delete.append(the_line)
+                        elif the_line.startswith('# SECURITY WARNING:'):
+                            lines_to_delete.append(the_line)  
+                        elif the_line.startswith('# See ht'):
+                            lines_to_delete.append(the_line)
+                        elif the_line.startswith('DEBUG'):
+                            lines_to_delete.append(the_line)
+                        elif the_line.startswith('ALLOWED_HOSTS'):
+                            lines_to_delete.append(the_line)
+
+                with open(base_settings_file, 'w') as file:
+                    for line in lines:
+                        if line not in lines_to_delete:
+                            file.write(line)
+
+                new_base_file_lines = []
+                with open(base_settings_file, 'r') as file:
+                    new_base_file_lines = file.readlines()
+
+                lines_to_write_to_base_file = new_base_file_lines[0:18] + new_base_file_lines[23:] # remove the blank lines between the BASE_DIR line and the INTALLED_APPS line
+                with open(base_settings_file, 'w') as file:
+                    file.writelines(lines_to_write_to_base_file)
 
 
                 # todo - create a custom user 
