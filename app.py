@@ -10,6 +10,8 @@ from utils import secret_key
 
 console = Console()
 
+root_of_this_code = os.getcwd()
+
 # TODOs ------------------------------------------------------------------------------------------------
 # todo - add an else block to if blocks where you check the return code of processes
 
@@ -136,6 +138,7 @@ def create_config_folders_and_files(project_folder):
     console.print("[bold green]successfully created config folders and settings files !!![/bold green]")
     console.print()
 
+# todo - move the lines to write into a dedicated txt file
 def write_settings_to_development_settings_file(project_folder):
     lines_to_write = [
         'from .base import *\n',
@@ -229,6 +232,27 @@ def delete_common_settings_from_base_settings(base_settings_file):
     with open(base_settings_file, 'w') as file:
         file.writelines(lines_to_write_to_base_file)
 
+def delete_database_settings_from_base_settings(base_settings_file):
+    
+    with open(os.path.join(root_of_this_code, 'files', 'old_database_setting.txt')) as file:
+        findlines = file.readlines()
+
+    with open (base_settings_file, 'r') as file:
+        lines = file.readlines()
+
+    with open(base_settings_file, 'w') as file:
+        for line in lines:
+            if line not in findlines:
+                file.write(line)
+
+    new_base_file_lines = []
+    with open(base_settings_file, 'r') as file:
+        new_base_file_lines = file.readlines()
+
+    lines_to_write_to_base_file = new_base_file_lines[0:59] + new_base_file_lines[64:] # remove the blank lines between the WSGI_APPLICATION and # Password validation
+    with open(base_settings_file, 'w') as file:
+        file.writelines(lines_to_write_to_base_file)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -300,6 +324,9 @@ def main():
                 write_settings_to_production_settings_file(project_folder)
                 # testing.py
                 write_settings_to_testing_settings_file(project_folder)
+
+                # delete the sqlite settings from the base.py settings file
+                delete_database_settings_from_base_settings(base_settings_file)
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
