@@ -289,6 +289,24 @@ def main():
                 # testing.py
                 write_settings_to_testing_settings_file(project_folder)
 
+                # todo - change the root conf 
+                old_url_conf = "ROOT_URLCONF = '{}.urls'".format(project_name)
+                new_url_conf = "ROOT_URLCONF = '{}.config.urls'".format(project_name)
+                with open(base_settings_file, 'r') as file:
+                    newBase = file.read().replace(old_url_conf, new_url_conf)
+                
+                with open(base_settings_file, 'w') as file:
+                    file.write(newBase)
+
+                # todo - change the WSGI APPLICATION setting
+                old_wsgi_application = "WSGI_APPLICATION = '{}.wsgi.application'".format(project_name)
+                new_wsgi_application = "WSGI_APPLICATION = 'TESTPROJECT.config.wsgi.application'".format(project_name)
+
+                with open(base_settings_file, 'r') as file:
+                    newBase = file.read().replace(old_wsgi_application, new_wsgi_application)
+
+                with open(base_settings_file, 'w') as file:
+                    file.write(newBase)
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
