@@ -95,7 +95,7 @@ def install_packages_in_pipenv_virtualenv():
     if install_required_packages_process.returncode == 0:
         console.print("[bold green]Installation of packages successfull!!![/bold green]")
         console.print()
-    return install_required_packages_process.returncode
+    return install_required_packages_process.returncode, install_drf
 
 def create_django_project(project_name):
     console.print("[bold yellow]creating django project ...[/bold yellow]")
@@ -272,6 +272,30 @@ def delete_database_settings_from_base_settings(base_settings_file):
     with open(base_settings_file, 'w') as file:
         file.writelines(lines_to_write_to_base_file)
 
+def add_extra_apps_to_installed_apps(base_settings_file):
+    with open(base_settings_file, 'r') as file:
+        lines = file.readlines()
+    lines_to_write = lines[:19] + lines[29:]
+
+    with open(base_settings_file, 'w') as file:
+        for line in lines_to_write:
+            file.write(line) 
+
+    # write the new application settings
+    with open(base_settings_file, 'r') as file:
+        newBase = []
+        for line in file.readlines():
+            if line.startswith('# Application definition'):
+                with open(os.path.join(root_of_this_code, 'files', 'new_installed_apps.txt')) as file:
+                    newBase.append(line)
+                    for line in file.readlines():
+                        newBase.append(line)
+            else:
+                newBase.append(line)
+
+    with open(base_settings_file, 'w') as file:
+        file.writelines(newBase)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -303,7 +327,7 @@ def main():
             
             # TODO - ask the user to provide the version numbers of the packages, leave it blank to install the latest packages
             # TODO - ask the user for which database they will be using and configure the system accordingly
-            # package_install_status = install_packages_in_pipenv_virtualenv() # ! uncomment this
+            # package_install_status, installed_drf = install_packages_in_pipenv_virtualenv() # ! uncomment this
 
             package_install_status = 0
             if package_install_status == 0:
@@ -346,6 +370,11 @@ def main():
 
                 # delete the sqlite settings from the base.py settings file
                 delete_database_settings_from_base_settings(base_settings_file)
+
+                # todo - add djangorestframework to the INSTALLED_APPS if the user included it
+                # if installed_drf == 1: # ! uncomment this
+                #     add_extra_apps_to_installed_apps(base_settings_file)
+
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
