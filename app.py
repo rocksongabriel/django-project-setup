@@ -151,6 +151,36 @@ def write_settings_to_development_settings_file(project_folder):
     with open(os.path.join(project_folder, 'config/settings', 'development.py'), 'w') as file:
         file.writelines(lines_to_write)
 
+def write_settings_to_production_settings_file(project_folder):
+    lines_to_write = [
+        'from .base import *\n',
+        '\n',
+        "SECRET_KEY = '{}'\n".format(secret_key()),
+        '\n',
+        'DEBUG = False\n',
+        '\n'
+        'ALLOWED_HOSTS = []\n',
+        '\n'
+        "INSTALLED_APPS += [\n\n]", 
+    ]
+    with open(os.path.join(project_folder, 'config/settings', 'production.py'), 'w') as file:
+        file.writelines(lines_to_write)
+
+def write_settings_to_testing_settings_file(project_folder):
+    lines_to_write = [
+        'from .base import *\n',
+        '\n',
+        "SECRET_KEY = '{}'\n".format(secret_key()),
+        '\n',
+        'DEBUG = True\n',
+        '\n'
+        'ALLOWED_HOSTS = []\n',
+        '\n'
+        "INSTALLED_APPS += [\n\n]", 
+    ]
+    with open(os.path.join(project_folder, 'config/settings', 'testing.py'), 'w') as file:
+        file.writelines(lines_to_write)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -254,7 +284,10 @@ def main():
                 # todo - add the settings to the individual setting files
                 # devevelopment.py
                 write_settings_to_development_settings_file(project_folder)
-
+                # production.py
+                write_settings_to_production_settings_file(project_folder)
+                # testing.py
+                write_settings_to_testing_settings_file(project_folder)
 
 
                 # todo - create a custom user 
