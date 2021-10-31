@@ -287,7 +287,8 @@ def add_static_files_and_media_settings(base_settings_file, config_dir):
 
     add_media_settings_url_to_urls(config_dir)
 
-def modify_manage_file_to_use_development_settings(manage_file, project_name):
+def modify_manage_file_to_use_development_settings(project_root_folder, project_name):
+    manage_file = os.path.join(project_root_folder, 'manage.py')
     with open(manage_file) as file:
         old_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.settings'".format(project_name)
         new_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.config.settings.development'".format(project_name)
@@ -314,7 +315,6 @@ def main():
     
     console.print()
     console.print("[bold blue]Django Project Setup[/bold blue]")
-    # Get the project name
     project_name = get_project_name()
     # Create a directory for the project name
     create_dir_for_project(project_name)
@@ -331,12 +331,8 @@ def main():
             import pip
             install_pipenv() # install pipenv if it doesn't exist
 
-            # create a virtualenvironment usingn pipenv in this directory
             # create_virtualenv_with_pipenv(project_name) # ! uncomment this
 
-            # TODO - create django project in the project folder directory
-            # todo - install the required packages
-            
             # TODO - ask the user to provide the version numbers of the packages, leave it blank to install the latest packages
             # TODO - ask the user for which database they will be using and configure the system accordingly
             # package_install_status, installed_drf = install_packages_in_pipenv_virtualenv() # ! uncomment this
@@ -373,22 +369,12 @@ def main():
                 delete_common_settings_from_base_settings(base_settings_file)
 
                 write_settings_to_dev_prod_test(project_folder)
-
-                # delete the sqlite settings from the base.py settings file
                 delete_database_settings_from_base_settings(base_settings_file)
-
-                #  add djangorestframework to the INSTALLED_APPS if the user included it
                 # if installed_drf == 1: # ! uncomment this
                 #     add_extra_apps_to_installed_apps(base_settings_file)
-
-                # add static files settings and media settings, and dir to templates
                 add_static_files_and_media_settings(base_settings_file, config_dir)
 
-                # todo - replace the settings in the manage.py file with the development settings
-                manage_file = os.path.join(project_root_folder, 'manage.py')
-                modify_manage_file_to_use_development_settings(manage_file, project_name)
-
-                # todo - modify the wsgi and asgi files to use the production settings files
+                modify_manage_file_to_use_development_settings(project_root_folder, project_name)
                 modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir)
 
                 # todo - create a custom user 
