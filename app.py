@@ -138,70 +138,31 @@ def create_config_folders_and_files(project_folder):
     console.print("[bold green]successfully created config folders and settings files !!![/bold green]")
     console.print()
 
-# todo - move the lines to write into a dedicated txt file
-def write_settings_to_development_settings_file(project_folder):
-    lines_to_write = [
-        'from .base import *\n',
-        '\n',
-        "SECRET_KEY = '{}'\n".format(secret_key()),
-        '\n',
-        'DEBUG = True\n',
-        '\n'
-        'ALLOWED_HOSTS = []\n',
-        '\n'
-        "INSTALLED_APPS += [\n\t'django_extensions',\n]", # add django_extensions to the installed apps here
-    ]
-    with open(os.path.join(project_folder, 'config', 'settings', 'development.py'), 'w') as file:
-        file.writelines(lines_to_write)
+def write_settings_to_dev_prod_test(project_folder):
+    settings_files_py = ['development.py', 'production.py', 'testing.py']
+    settings_files_txt = ['development_settings.txt', 'production_settings.txt', 'testing_settings.txt']
 
-    # Write database settings to the settings file
-    with open(os.path.join(project_folder, 'config', 'settings', 'development.py'), 'a') as file1:
-        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
-            for line in file2:
-                file1.write(line)
+    for index,setting_file_py in enumerate(settings_files_py):
+        setting_file_py_path = os.path.join(project_folder, 'config', 'settings', '{}'.format(setting_file_py))
+        setting_file_txt = settings_files_txt[index]
+        setting_file_txt_path = os.path.join(root_of_this_code, 'files', '{}'.format(setting_file_txt))
 
+        # read settings from txt file
+        with open(setting_file_txt_path) as file1:
+            lines_to_write = file1.readlines()
 
-def write_settings_to_production_settings_file(project_folder):
-    lines_to_write = [
-        'from .base import *\n',
-        '\n',
-        "SECRET_KEY = '{}'\n".format(secret_key()),
-        '\n',
-        'DEBUG = False\n',
-        '\n'
-        'ALLOWED_HOSTS = []\n',
-        '\n'
-        "INSTALLED_APPS += [\n\n]", 
-    ]
-    with open(os.path.join(project_folder, 'config', 'settings', 'production.py'), 'w') as file:
-        file.writelines(lines_to_write)
+        # write settings to py file
+        with open(setting_file_py_path, 'w') as file2:
+            file2.writelines(lines_to_write)
 
-    # Write database settings to the settings file
-    with open(os.path.join(project_folder, 'config', 'settings', 'production.py'), 'a') as file1:
-        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
-            for line in file2:
-                file1.write(line)
-
-def write_settings_to_testing_settings_file(project_folder):
-    lines_to_write = [
-        'from .base import *\n',
-        '\n',
-        "SECRET_KEY = '{}'\n".format(secret_key()),
-        '\n',
-        'DEBUG = True\n',
-        '\n'
-        'ALLOWED_HOSTS = []\n',
-        '\n'
-        "INSTALLED_APPS += [\n\n]", 
-    ]
-    with open(os.path.join(project_folder, 'config', 'settings', 'testing.py'), 'w') as file:
-        file.writelines(lines_to_write)
-
-    # Write database settings to the settings file
-    with open(os.path.join(project_folder, 'config', 'settings', 'testing.py'), 'a') as file1:
-        with open(os.path.join(root_of_this_code, 'files', 'new_database_setting.txt')) as file2:
-            for line in file2:
-                file1.write(line)
+        # modify the secret key line
+        with open(setting_file_py_path) as file1:
+            old_secret_key_line = "SECRET_KEY = ''"
+            new_secret_key_line = "SECRET_KEY = '{}'".format(secret_key())
+            new_setting_file = file1.read().replace(old_secret_key_line, new_secret_key_line)
+        
+        with open(setting_file_py_path, 'w') as file2:
+            file2.writelines(new_setting_file)
 
 def change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name):
     old_base_dir = 'BASE_DIR = Path(__file__).resolve().parent.parent'
@@ -411,13 +372,7 @@ def main():
                 # TODO - refactor this code
                 delete_common_settings_from_base_settings(base_settings_file)
 
-                #  add the settings to the individual setting files
-                # devevelopment.py
-                write_settings_to_development_settings_file(project_folder)
-                # production.py
-                write_settings_to_production_settings_file(project_folder)
-                # testing.py
-                write_settings_to_testing_settings_file(project_folder)
+                write_settings_to_dev_prod_test(project_folder)
 
                 # delete the sqlite settings from the base.py settings file
                 delete_database_settings_from_base_settings(base_settings_file)

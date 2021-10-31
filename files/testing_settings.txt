@@ -1,6 +1,17 @@
+from .base import *
+
+SECRET_KEY = ''
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['*'] # remove this if you don't want to allow all hosts
+
+INSTALLED_APPS += [
+
+]
 
 
-# Database setting
+# Database setting for testing environment
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

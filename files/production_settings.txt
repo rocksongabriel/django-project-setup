@@ -1,0 +1,32 @@
+from .base import *
+
+SECRET_KEY = ''
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['www.domain.com'] # Edit this and put in your domain
+
+INSTALLED_APPS += [
+
+]
+
+# Database setting for production environment
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': '', # put the name of your postgreSQL database here
+        'USER': '', # put the name of the user of the database here
+        'HOST': 'localhost',
+        'PORT': 5432
+    }
+}
+
+
+# NOTE: you can run 'python manage.py runserver_plus --cert /tmp/cert.txt' to run the development server over https for testing
+
+# Settings for when the website is over HTTPS or SSL
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+SECURE_SSL_REDIRECT = True

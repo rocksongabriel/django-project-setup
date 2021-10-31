@@ -1,0 +1,23 @@
+from .base import *
+
+SECRET_KEY = ''
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['*'] # remove this if you don't want to allow all hosts
+
+INSTALLED_APPS += [
+    'django_extensions',
+]
+
+
+# Database setting for development environment
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': '', # put the name of your postgreSQL database here
+        'USER': '', # put the name of the user of the database here
+        'HOST': 'localhost',
+        'PORT': 5432
+    }
+}
