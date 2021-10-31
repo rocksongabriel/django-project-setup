@@ -247,7 +247,7 @@ def add_extra_apps_to_installed_apps(base_settings_file):
         newBase = []
         for line in file.readlines():
             if line.startswith('# Application definition'):
-                with open(os.path.join(root_of_this_code, 'files', 'new_installed_apps.txt')) as file:
+                with open(os.path.join(root_of_this_code, 'files', 'installed_apps_settings_drf.txt')) as file:
                     newBase.append(line)
                     for line in file.readlines():
                         newBase.append(line)
@@ -387,6 +387,30 @@ def main():
                 modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir)
 
                 # todo - create a custom user 
+                # create users app in the project
+                os.chdir(project_root_folder)
+                create_users_app_process = subprocess.run('pipenv run python manage.py startapp users', shell=True)
+                # add new Users definition to the models.py
+                models_file = os.path.join(project_root_folder, "users", "models.py")
+                user_model_code_txt = os.path.join(root_of_this_code, "files", "user_model_code.txt")
+                with open(user_model_code_txt) as file1:
+                    lines_to_write = file1.readlines()
+                
+                with open(models_file, 'w') as file:
+                    file.writelines(lines_to_write)
+
+                # Add the custom user to the settings file
+                with open(base_settings_file, 'a') as file:
+                    file.write("\nAUTH_USER_MODEL = 'users.User'\n")
+
+                # Add the users app to the installed_apps 
+                with open(base_settings_file) as file1:
+                    lines_to_write = "\t'django.contrib.staticfiles',\n\n\t# Developer's apps\n\t'users.apps.UsersConfig'\n"
+                    lines = file1.read().replace("    'django.contrib.staticfiles',\n", lines_to_write)
+
+                with open(base_settings_file, 'w') as file2:
+                    file2.writelines(lines)
+
                 # todo - add configuration of the packages that need it
 
             
