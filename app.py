@@ -309,6 +309,15 @@ def modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir):
         with open(file_path, 'w') as file:
             file.writelines(newFile)
 
+def write_django_rest_framework_url_to_urls_py(config_dir):
+    url_file_path = os.path.join(config_dir, 'urls.py')
+    with open(url_file_path) as file:
+        file1 = file.read().replace('from django.urls import path', 'from django.urls import path, include')
+        new_line = "path('api-auth/', include('rest_framework.urls'))"
+        file2 = file1.replace(']', '\t{}\n]'.format(new_line))
+
+    with open(url_file_path, 'w') as file:
+        file.writelines(file2)
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -364,16 +373,16 @@ def main():
                 # Change where the BASE_DIR is pointing and change the root conf, and wsgi application settings
                 change_base_dir_urlconf_wsgi_app_setting(base_settings_file, project_name)
 
-                # Remove certain lines from the base file, these lines will be moved to the individual settings files
-                # TODO - refactor this code
                 delete_common_settings_from_base_settings(base_settings_file)
 
                 write_settings_to_dev_prod_test(project_folder)
                 delete_database_settings_from_base_settings(base_settings_file)
+
                 # if installed_drf == 1: # ! uncomment this
                 #     add_extra_apps_to_installed_apps(base_settings_file)
-                add_static_files_and_media_settings(base_settings_file, config_dir)
+                #     write_django_rest_framework_url_to_urls_py(config_dir)
 
+                add_static_files_and_media_settings(base_settings_file, config_dir)
                 modify_manage_file_to_use_development_settings(project_root_folder, project_name)
                 modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir)
 
