@@ -335,6 +335,18 @@ def modify_manage_file_to_use_development_settings(manage_file, project_name):
     with open(manage_file, 'w') as file:
         file.writelines(newManageFile)
 
+def modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir):
+    files = ['asgi.py', 'wsgi.py']
+    for file_name in files:
+        file_path = os.path.join(config_dir, file_name)
+        with open(file_path) as file:
+            old_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TESTPROJECT.settings'"
+            new_line = "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TESTPROJECT.config.settings.production'"
+            newFile = file.read().replace(old_line, new_line)
+
+        with open(file_path, 'w') as file:
+            file.writelines(newFile)
+
 
 def main():
     # TODO - detect the operating system so as to know what commands to use
@@ -420,6 +432,9 @@ def main():
                 # todo - replace the settings in the manage.py file with the development settings
                 manage_file = os.path.join(project_root_folder, 'manage.py')
                 modify_manage_file_to_use_development_settings(manage_file, project_name)
+
+                # todo - modify the wsgi and asgi files to use the production settings files
+                modify_asgi_and_wsgi_files_to_use_the_production_settings(config_dir)
 
                 # todo - create a custom user 
                 # todo - add configuration of the packages that need it
